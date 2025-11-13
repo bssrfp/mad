@@ -1,0 +1,47 @@
+//1
+class Dice {
+    var sides = 6
+    fun roll(): Int {
+        //random() function to generate random numbers. 
+        //random() takes a series of numbers as an input and it returns a random Int as an output.
+        val randomNumber = (1..sides).random()  
+        return randomNumber
+    }
+}
+fun main() {
+    val myFirstDice = Dice()// object creation
+    val diceRoll = myFirstDice.roll()
+    println("Your ${myFirstDice.sides} sided dice rolled ${diceRoll}!")
+}
+
+
+
+
+//2
+// companion object
+class CSE {
+    companion object Test  {                 //companion object name Test
+        fun section_g() = println("WELCOME TO CSE-G MAD LAB")
+    }
+}
+fun main() {
+    CSE.section_g()   // method accessing using class name
+}
+Output:
+WELCOME TO CSE-G MAD LAB
+
+
+// getter and setter properties
+
+class CSE {
+    var name: String = " "
+       
+}
+fun main() {
+    val c = CSE()
+    c.name = "WELCOME TO CSE-G"   // access setter
+    println(c.name)               // access getter
+}
+
+Output:
+WELCOME TO CSE-G

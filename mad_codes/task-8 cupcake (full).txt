@@ -1,0 +1,391 @@
+// 8 mainactivity.kt
+package com.example.cupcake
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.cupcake.navigation.CupcakeNavHost
+import com.example.cupcake.ui.theme.CupcakeTheme
+import com.example.cupcake.viewmodel.OrderViewModel
+
+class MainActivity : ComponentActivity() {
+    private val orderViewModel: OrderViewModel by viewModels()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            var navController = rememberNavController()
+            CupcakeNavHost(navController = navController, viewModel = orderViewModel)
+        }
+    }
+}
+
+
+
+
+
+
+
+
+// 8 FlavourScreen.kt in screens
+package com.example.cupcake.screens
+
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.cupcake.viewmodel.OrderViewModel
+
+@Composable
+fun FlavorScreen(onNext:()->Unit,
+                 onCancel:()->Unit,
+                 viewModel: OrderViewModel)
+{
+    val flavors=listOf("choclete","venela","redwelvet")
+    Column(Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally)
+    {
+        Text("Flavor", fontSize = 25.sp, color = Color.Red)
+        Spacer(Modifier.height(25.dp))
+        flavors.forEach { flavors->
+            Button(onClick = {
+                viewModel.setFlavor(flavors)
+                onNext()
+            }, Modifier.fillMaxWidth().padding(vertical = 4.dp))
+            {
+                Text(flavors)
+            }
+        }
+        Spacer(Modifier.height(25.dp))
+        OutlinedButton(onClick = onCancel)
+        {
+            Text("Cancel Order")
+        }
+    }
+}
+
+
+
+
+
+
+// 8 pickupscreen.kt in screens
+package com.example.cupcake.screens
+
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.cupcake.viewmodel.OrderViewModel
+
+@Composable
+fun PickupScreen(onNext:()-> Unit,
+                 onCancel:()-> Unit,
+                 viewModel: OrderViewModel)
+{
+    var options=viewModel.getPickupOptions()
+    Column (Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally)
+    {
+        Text("Choose pickup date")
+        Spacer(Modifier.height(20.dp))
+        options.forEach { date->
+            Button(onClick = {
+                viewModel.setDate(date)
+                onNext()
+            }, Modifier.fillMaxWidth().padding(vertical = 4.dp))
+            {
+                Text(date)
+            }
+        }
+        Spacer(Modifier.height(20.dp))
+        OutlinedButton(onClick = onCancel)
+        {
+            Text("cancel order")
+        }
+    }
+}
+
+
+
+
+
+
+// 8 startsceen.kt in screens
+package com.example.cupcake.screens
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@Composable
+fun StartScreen(onNext:(Int)->Unit)
+{
+    var quantity by remember { mutableStateOf(value=1) }
+    Column (modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center){
+        Text(text="Choose Quantity", fontSize = 20.sp, color = Color.Red)
+        Spacer(modifier = Modifier.height(25.dp))
+        Row (verticalAlignment = Alignment.CenterVertically){
+            Button(onClick = {
+                if (quantity> 1)
+                    quantity--
+            }, Modifier.size(50.dp)) {
+                Text(text = "-")
+            }
+            Spacer(Modifier.width(25.dp))
+            Text(quantity.toString())
+            Spacer(Modifier.width(25.dp))
+            Button(onClick = {
+                quantity++
+            }) {
+                Text("+")
+            }
+        }
+        Spacer(Modifier.height(25.dp))
+        Button(onClick = {
+            onNext(quantity)
+        }) {
+            Text("Next")
+        }
+    }
+}
+
+
+
+
+
+
+// 8 summaryscreen.kt in screens
+package com.example.cupcake.screens
+
+import android.content.Context
+import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import com.example.cupcake.viewmodel.OrderViewModel
+
+@Composable
+fun SummaryScreen(onCancel:()->Unit,
+                  viewModel: OrderViewModel)
+{
+    var summary=viewModel.getOrderSummary()
+    var context= LocalContext.current
+    Column(Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally)
+    {
+        Text(summary)
+        Spacer(Modifier.height(20.dp))
+        Button(onClick = {
+            shareOrder(context,summary)
+        })
+        {
+            Text("Send order")
+        }
+        Spacer(Modifier.height(20.dp))
+        Button(onCancel)
+        {
+            Text("Cancel order")
+        }
+    }
+}
+fun shareOrder(context: Context, summary: String)
+{
+    var intent= Intent(Intent.ACTION_SEND).apply {
+        type="text/palin"
+        putExtra(Intent.EXTRA_TEXT,summary)
+    }
+    context.startActivity(Intent.createChooser(intent,"Share Order details"))
+}
+
+
+
+
+
+
+// 8 orderviewmodel in viewmodel
+package com.example.cupcake.viewmodel
+
+import android.icu.util.Calendar
+import androidx.compose.ui.text.intl.Locale
+import androidx.core.location.LocationRequestCompat
+import androidx.lifecycle.ViewModel
+import java.text.SimpleDateFormat
+
+
+class OrderViewModel: ViewModel()
+    {
+        var quantity:Int=0
+            private set
+        var flavor: String=""
+            private set
+        var date: String=""
+            private set
+        fun setDate(newdate: String)
+        {
+            date=newdate
+        }
+        fun getPickupOptions(): List<String>
+        {
+            var options=mutableListOf<String>()
+            var calender= Calendar.getInstance()
+
+            repeat(4)
+            {
+                var formatted= SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(calender.time)
+                options.add(formatted)
+                calender.add(Calendar.DATE,1)
+            }
+            return options
+        }
+        fun setQuantity(newQuantity:Int)
+        {
+            quantity=newQuantity
+        }
+        fun setFlavor(newFlavor:String)
+        {
+            flavor=newFlavor
+        }
+        fun resetOrder()
+        {
+            quantity=0
+            flavor=""
+            date=""
+        }
+        fun getOrderSummary(): String=
+            "order summary\n"+
+                    "Quantity:$quantity\n" +
+                    "Flavor:$flavor\n"+
+                    "Pickup Date:$date"
+    }
+
+
+
+
+
+
+
+
+// 8 CupcakeNavHost.kt in navigable
+package com.example.cupcake.navigation
+
+import android.widget.MediaController
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.example.cupcake.screens.FlavorScreen
+import com.example.cupcake.screens.PickupScreen
+import com.example.cupcake.screens.StartScreen
+import com.example.cupcake.screens.SummaryScreen
+import com.example.cupcake.viewmodel.OrderViewModel
+
+enum class CupcakeScreen{start,flavor,Pickup,summary}
+@Composable
+fun CupcakeNavHost(navController: NavHostController,
+                   viewModel: OrderViewModel)
+{
+    NavHost(navController, startDestination = CupcakeScreen.start.name)
+    {
+        composable(CupcakeScreen.start.name)
+        {
+           StartScreen(onNext = {qty->
+               viewModel.setQuantity(qty)
+               navController.navigate(CupcakeScreen.flavor.name)
+           })
+        }
+        composable (CupcakeScreen.flavor.name)
+        {
+            FlavorScreen(onNext = {
+                navController.navigate(CupcakeScreen.Pickup.name) },
+            onCancel = {
+                viewModel.resetOrder()
+                navController.popBackStack(CupcakeScreen.start.name, inclusive = false) },
+                viewModel=viewModel)
+        }
+        composable (CupcakeScreen.Pickup.name)
+        {
+            PickupScreen(onNext = {
+                navController.navigate(CupcakeScreen.summary.name)
+            }, onCancel = {
+                viewModel.resetOrder()
+                navController.popBackStack(CupcakeScreen.start.name, inclusive = false)
+            },viewModel=viewModel)
+        }
+        composable (CupcakeScreen.summary.name)
+        {
+            SummaryScreen(onCancel = {
+                viewModel.resetOrder()
+                navController.popBackStack(CupcakeScreen.start.name, inclusive = false)
+            },viewModel=viewModel)
+        }
+    }
+}

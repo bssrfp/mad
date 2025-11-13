@@ -1,0 +1,80 @@
+package com.example.activity
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.example.activity.ui.theme.ActivityTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        showToast("onCreate called")
+        setContent {
+            display()
+        }
+    }
+   //activity life cycle methods
+    override fun onStart() {
+        super.onStart()
+        showToast("onStart called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showToast("onResume called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        showToast("onPause called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        showToast("onStop called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        showToast("onRestart called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showToast("onDestroy called")
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+//hello world in center of screen with red color font and white background
+@Composable
+fun display() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Hello World", color = Color.Red, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+
+    }
+
+}

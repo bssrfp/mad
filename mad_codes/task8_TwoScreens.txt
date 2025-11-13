@@ -1,0 +1,188 @@
+// MainActivity.kt
+package com.example.cupcake
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.navigation.compose.rememberNavController
+import com.example.cupcake.navigation.CupcakeNavHost
+import com.example.cupcake.viewmodel.OrderViewModel
+
+class MainActivity : ComponentActivity() {
+    private val orderViewModel: OrderViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            val navController = rememberNavController()
+            CupcakeNavHost(navController = navController, viewModel = orderViewModel)
+        }
+    }
+}
+
+
+// CupcakeNavHost.kt
+package com.example.cupcake.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.example.cupcake.screens.FlavorScreen
+import com.example.cupcake.screens.QuantityScreen
+import com.example.cupcake.viewmodel.OrderViewModel
+
+enum class CupcakeScreen { Quantity, Flavor }
+
+@Composable
+fun CupcakeNavHost(navController: NavHostController, viewModel: OrderViewModel) {
+    NavHost(navController = navController, startDestination = CupcakeScreen.Quantity.name) {
+
+        composable(CupcakeScreen.Quantity.name) {
+            QuantityScreen(onNext = { qty ->
+                viewModel.setQuantity(qty)
+                navController.navigate(CupcakeScreen.Flavor.name)
+            })
+        }
+
+        composable(CupcakeScreen.Flavor.name) {
+            FlavorScreen(
+                onNext = {
+                    val summary = viewModel.getOrderSummary()
+                    println(summary)
+                },
+                onCancel = {
+                    viewModel.resetOrder()
+                    navController.popBackStack(CupcakeScreen.Quantity.name, inclusive = false)
+                },
+                viewModel = viewModel
+            )
+        }
+    }
+}
+
+
+// QuantityScreen.kt
+package com.example.cupcake.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@Composable
+fun QuantityScreen(onNext: (Int) -> Unit) {
+    var quantity by remember { mutableStateOf(1) }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Choose Quantity", fontSize = 24.sp, color = Color.Red)
+        Spacer(modifier = Modifier.height(25.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Button(onClick = { if (quantity > 1) quantity-- }, Modifier.size(50.dp)) {
+                Text("-")
+            }
+            Spacer(Modifier.width(25.dp))
+            Text(quantity.toString(), fontSize = 20.sp)
+            Spacer(Modifier.width(25.dp))
+            Button(onClick = { quantity++ }) {
+                Text("+")
+            }
+        }
+
+        Spacer(Modifier.height(25.dp))
+        Button(onClick = { onNext(quantity) }) {
+            Text("Next")
+        }
+    }
+}
+
+
+// FlavorScreen.kt
+package com.example.cupcake.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.cupcake.viewmodel.OrderViewModel
+
+@Composable
+fun FlavorScreen(
+    onNext: () -> Unit,
+    onCancel: () -> Unit,
+    viewModel: OrderViewModel
+) {
+    val flavors = listOf("Chocolate", "Vanilla", "Red Velvet")
+
+    Column(
+        Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Select Flavor", fontSize = 25.sp, color = Color.Red)
+        Spacer(Modifier.height(25.dp))
+
+        flavors.forEach { flavor ->
+            Button(
+                onClick = {
+                    viewModel.setFlavor(flavor)
+                    onNext()
+                },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Text(flavor)
+            }
+        }
+
+        Spacer(Modifier.height(25.dp))
+        OutlinedButton(onClick = onCancel) {
+            Text("Cancel Order")
+        }
+    }
+}
+
+
+// OrderViewModel.kt
+package com.example.cupcake.viewmodel
+
+import androidx.lifecycle.ViewModel
+
+class OrderViewModel : ViewModel() {
+    private var quantity: Int = 0
+    private var flavor: String = ""
+
+    fun setQuantity(q: Int) {
+        quantity = q
+    }
+
+    fun setFlavor(f: String) {
+        flavor = f
+    }
+
+    fun resetOrder() {
+        quantity = 0
+        flavor = ""
+    }
+
+    fun getOrderSummary(): String =
+        "Order Summary\nQuantity: $quantity\nFlavor: $flavor"
+}

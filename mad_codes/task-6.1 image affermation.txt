@@ -1,0 +1,73 @@
+//task-6.1
+package com.example.task6
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+
+class MainActivity : ComponentActivity() {
+    data class  Affrimation(var image: Int,var text: String)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            affrimation()
+
+        }
+    }
+}
+
+@Composable
+fun affrimation(){
+    var aff_images=listOf(MainActivity.Affrimation(R.drawable.p1,"Porsche Signature"),
+        MainActivity.Affrimation(R.drawable.p2,"White Porsche"),
+        MainActivity.Affrimation(R.drawable.p3,"Glossy Black Porsche"),
+        MainActivity.Affrimation(R.drawable.p4,"Glossy White Porsche"),
+        MainActivity.Affrimation(R.drawable.p5,"Porsche Signature")
+
+    )
+
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp), modifier = Modifier.padding((16.dp)))
+    {
+        items(aff_images)
+        {
+                affrimation -> affrimationLayout(affrimation)
+        }
+    }
+}
+@Composable
+fun affrimationLayout(affrimation: MainActivity.Affrimation) {
+    Card() {
+        Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
+            Image(painter = painterResource(id = affrimation.image), contentDescription = null)
+            Text(text = affrimation.text, modifier = Modifier.padding(20.dp))
+
+        }
+    }
+}
+
+
+add images 
+p1.jpg
+...
+
+p4.jpg
+in drawable

@@ -1,0 +1,169 @@
+task 7.1
+
+
+//MainActivity
+package com.example.nav
+
+import Nav
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.nav.ui.theme.NavTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            Nav()
+
+        }
+    }
+}
+
+//ScreenA.kt(file)
+package com.example.nav
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+@Composable
+fun ScreenA(navController: NavController){
+
+    Column(modifier= Modifier.fillMaxSize()
+        .wrapContentSize(Alignment.Center))
+    {
+        Text("ScreenA", fontSize = 45.sp, color = Color.Red)
+        Spacer(modifier = Modifier.height(30.dp))
+        Button(onClick = {
+            navController.navigate("B")
+        }){
+            Text("Go to ScreenB")
+        }
+    }
+}
+
+
+
+//ScreenB.kt
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+
+
+@Composable
+fun ScreenB(navController: NavController){
+
+    Column(modifier= Modifier.fillMaxSize()
+        .wrapContentSize(Alignment.Center))
+    {
+        Text("ScreenB", fontSize = 45.sp, color = Color.Red)
+        Spacer(modifier = Modifier.height(30.dp))
+        Button(onClick = {
+            navController.navigate("C")
+        }){
+            Text("Go to ScreenC")
+        }
+    }
+}
+
+
+
+//ScreenC.kt
+package com.example.nav
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.WhitePoint
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+
+
+@Composable
+fun ScreenC(navController: NavController){
+
+    Column(modifier= Modifier.fillMaxSize()
+        .wrapContentSize(Alignment.Center))
+    {
+        Text("ScreenC", fontSize = 45.sp, color = Color.Red)
+        Spacer(modifier = Modifier.height(30.dp))
+        Button(onClick = {
+            navController.navigate("A")
+        }){
+            Text("Go to ScreenA")
+        }
+    }
+}
+
+
+//NavGraph.kt
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.nav.ScreenA
+import com.example.nav.ScreenC
+
+@Composable
+
+fun Nav(){
+    val navController: NavHostController = rememberNavController()
+    NavHost(navController, startDestination = "C")
+    {
+        composable("A")
+        {
+            ScreenA(navController)
+        }
+        composable("B") {
+            ScreenB(navController)
+        }
+        composable("C") {
+            ScreenC(navController)
+        }
+
+    }
+}
+
+

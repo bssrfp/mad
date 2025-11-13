@@ -1,0 +1,55 @@
+package com.example.countervm
+
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+                Show()
+        }
+    }
+}
+
+
+@Composable
+fun Show() {
+    // Get the ViewModel instance
+    val counterViewModel: CounterViewModel = viewModel()
+
+    val counter by counterViewModel.count.observeAsState(0)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp), // Added padding
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Counter, $counter",
+            fontSize = 40.sp
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Button(onClick = {
+            counterViewModel.increment()
+        }) {
+            Text("Increment")
+        }
+    }
+}
